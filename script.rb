@@ -74,12 +74,17 @@ module Enumerable
     return self.size
   end
 
-  def my_map
+  def my_map(proc_arg = nil)
     arr = Array.new
 
     for value in self do
-      arr << yield(value)
+      if proc_arg.is_a? Proc
+        arr << proc_arg.call(value)
+      else
+        arr << yield(value)
+      end
     end
+
     arr
   end
 
@@ -123,25 +128,3 @@ end
 def multiply_els(arr)
   arr.my_inject(:*)
 end
-
-# p [1, 2, 3].my_each { |n| puts n }
-# p "------"
-# p [1, 2, 3].my_each_with_index { |n, i| puts "index: #{i} for #{n}"}
-# p "------"
-# p [1, 2, 3, 4, 5].my_select { |n| n.odd? }
-# p "------"
-# p [1, 3, 5].my_all? { |n| n.odd? }
-# p "------"
-# p [1, 2, 'abcd'].my_any?(2)
-# p [1, 3, 'abcd'].my_none?(/d/)
-# p [3, 2, 4, 2].my_count(3) { |n| n / 2 == 2 }
-# p "------"
-# p [1, 2, 4].my_map{ |n| n * 2 }
-
-# [1, 4, 3, 5].my_inject
-# p [2, 4, 3, 5].my_inject(12, :*)
-# p [2, 4, 3, 5].my_inject { |sum, n| sum * n }
-# p [2, 4, 3, 5].inject { |sum, n| sum * n }
-# p multiply_els([2,4,5])
-p [1, 2, 3].my_map_mod {|n| n * 2 }
-
