@@ -1,9 +1,11 @@
+# rubocop:disable Style/CaseEquality, Style/StringLiterals, Style/For
+
 # Enumerables
 
 module Enumerable
   def my_each
     for value in self do
-      yield (value)
+      yield value
     end
   end
 
@@ -17,32 +19,29 @@ module Enumerable
   end
 
   def my_select
-    arr = Array.new
+    arr = []
 
     for value in self do
-      if yield(value)
-        arr << value
-      end
+      arr << value if yield(value)
     end
     arr
   end
 
   def my_all?(&block)
-    new_arr = self.my_select(&block)
+    new_arr = my_select(&block)
 
-    return new_arr.size == self.size ? true : false
+    new_arr.size == size
   end
 
   def my_any?(pattern = nil, &block)
     if block_given?
-      new_arr = self.my_select(&block)
-      return new_arr.size > 0 ? true : false
+      new_arr = my_select(&block)
+      return new_arr.size.positive?
     end
-    
-    if !pattern.nil?
+    unless pattern.nil?
       for value in self do
         if value.is_a? String and !pattern.is_a? Integer
-          return true if pattern.match? value
+        return true if pattern.match? value
         end
 
         if pattern.is_a? Class
@@ -52,12 +51,11 @@ module Enumerable
         end
       end
     end
-    
-    return false
+    false
   end
 
   def my_none?(pattern = nil, &block)
-    return !self.my_any?(pattern, &block)
+    !my_any?(pattern, &block)
   end
 
   def my_count(pattern = nil, &block)
@@ -67,15 +65,15 @@ module Enumerable
     end
 
     if block_given?
-      arr = self.my_select(&block)
+      arr = my_select(&block)
       return arr.size
     end
 
-    return self.size
+    size
   end
 
   def my_map(proc_arg = nil)
-    arr = Array.new
+    arr = []
 
     for value in self do
       if proc_arg.is_a? Proc
@@ -88,9 +86,8 @@ module Enumerable
     arr
   end
 
-  def my_inject(initial = nil, sym = nil, &block)
-
-    if not block_given?
+  def my_inject(initial = nil, sym = nil)
+    unless block_given?
       if initial.is_a? Symbol
         sym = initial
         initial = nil
@@ -98,7 +95,7 @@ module Enumerable
 
       initial = self[0] if initial.nil?
 
-      1.upto(self.size-1) do |i|
+      1.upto(size - 1) do |i|
         initial = initial.send(sym, self[i])
       end
 
@@ -107,7 +104,7 @@ module Enumerable
 
     memo = self[0]
 
-    1.upto(self.size-1) do |i|
+    1.upto(size - 1) do |i|
       memo = yield(memo, self[i])
     end
 
@@ -115,7 +112,7 @@ module Enumerable
   end
 
   def my_map_mod(&block)
-    arr = Array.new
+    arr = []
     prc = Proc.new(&block)
 
     for value in self do
