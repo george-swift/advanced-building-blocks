@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # rubocop:disable Style/CaseEquality, Style/For
 
 # Enumerables
@@ -125,3 +123,5 @@ end
 def multiply_els(arr)
   arr.my_inject(:*)
 end
+
+# rubocop:enable Style/CaseEquality, Style/For
