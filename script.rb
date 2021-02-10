@@ -1,4 +1,6 @@
 # rubocop:disable Style/CaseEquality, Style/For
+# rubocop:disable Metrics/CyclomaticComplexity
+# rubocop:disable Metrics/PerceivedComplexity
 
 # Enumerables
 
