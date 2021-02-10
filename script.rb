@@ -127,3 +127,5 @@ def multiply_els(arr)
 end
 
 # rubocop:enable Style/CaseEquality, Style/For
+# rubocop:enable Metrics/CyclomaticComplexity
+# rubocop:enable Metrics/PerceivedComplexity
