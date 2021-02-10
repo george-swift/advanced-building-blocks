@@ -41,7 +41,7 @@ module Enumerable
     
     if !pattern.nil?
       for value in self do
-        if value.is_a? String 
+        if value.is_a? String and !pattern.is_a? Integer
           return true if pattern.match? value
         end
 
@@ -55,6 +55,24 @@ module Enumerable
     
     return false
   end
+
+  def my_none?(pattern = nil, &block)
+    return !self.my_any?(pattern, &block)
+  end
+
+  def my_count(pattern = nil, &block)
+    if !pattern.nil?
+      arr = self.my_select { |n| n === pattern }
+      return arr.size
+    end
+
+    if block_given?
+      arr = self.my_select(&block)
+      return arr.size
+    end
+
+    return self.size
+  end
 end
 
 # p [1, 2, 3].my_each { |n| puts n }
@@ -65,4 +83,6 @@ end
 # p "------"
 # p [1, 3, 5].my_all? { |n| n.odd? }
 # p "------"
-p [1, 3, 'abcd'].my_any?(/d/)
+# p [1, 2, 'abcd'].my_any?(2)
+# p [1, 3, 'abcd'].my_none?(/d/)
+# p [3, 2, 4, 2].my_count(3) { |n| n / 2 == 2 }
