@@ -1,4 +1,6 @@
-# rubocop:disable Style/CaseEquality, Style/StringLiterals, Style/For
+# frozen_string_literal: true
+
+# rubocop:disable Style/CaseEquality, Style/For
 
 # Enumerables
 
@@ -38,19 +40,17 @@ module Enumerable
       new_arr = my_select(&block)
       return new_arr.size.positive?
     end
+
     unless pattern.nil?
       for value in self do
-        if value.is_a? String and !pattern.is_a? Integer
-          return true if pattern.match? value
-        end
+        return true if (value.is_a? String) && (!pattern.is_a? Integer) && (pattern.match? value)
 
-        if pattern.is_a? Class
-          return true if value.is_a? pattern
-        else 
-          return true if value === pattern
-        end
+        return true if (pattern.is_a? Class) && (value.is_a? pattern)
+
+        return true if value === pattern
       end
     end
+
     false
   end
 
@@ -60,7 +60,7 @@ module Enumerable
 
   def my_count(pattern = nil, &block)
     unless pattern.nil?
-      arr = self.my_select { |n| n === pattern }
+      arr = my_select { |n| n === pattern }
       return arr.size
     end
 
@@ -76,11 +76,11 @@ module Enumerable
     arr = []
 
     for value in self do
-      if proc_arg.is_a? Proc
-        arr << proc_arg.call(value)
-      else
-        arr << yield(value)
-      end
+      arr << if proc_arg.is_a? Proc
+               proc_arg.call(value)
+             else
+               yield(value)
+             end
     end
 
     arr
