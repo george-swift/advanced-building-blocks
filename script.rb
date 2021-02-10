@@ -76,10 +76,37 @@ module Enumerable
 
   def my_map
     arr = Array.new
+
     for value in self do
       arr << yield(value)
     end
     arr
+  end
+
+  def my_inject(initial = nil, sym = nil, &block)
+
+    if not block_given?
+      if initial.is_a? Symbol
+        sym = initial
+        initial = nil
+      end
+
+      initial = self[0] if initial.nil?
+
+      1.upto(self.size-1) do |i|
+        initial = initial.send(sym, self[i])
+      end
+
+      initial
+    end
+
+    memo = self[0]
+
+    1.upto(self.size-1) do |i|
+      memo = yield(memo, self[i])
+    end
+
+    memo
   end
 end
 
@@ -94,5 +121,10 @@ end
 # p [1, 2, 'abcd'].my_any?(2)
 # p [1, 3, 'abcd'].my_none?(/d/)
 # p [3, 2, 4, 2].my_count(3) { |n| n / 2 == 2 }
-p "------"
-p [1, 2, 4].my_map{ |n| n * 2 }
+# p "------"
+# p [1, 2, 4].my_map{ |n| n * 2 }
+
+# [1, 4, 3, 5].my_inject
+# p [2, 4, 3, 5].my_inject(12, :*)
+p [2, 4, 3, 5].my_inject { |sum, n| sum * n }
+# p [2, 4, 3, 5].inject { |sum, n| sum * n }
