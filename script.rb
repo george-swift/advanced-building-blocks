@@ -73,6 +73,14 @@ module Enumerable
 
     return self.size
   end
+
+  def my_map
+    arr = Array.new
+    for value in self do
+      arr << yield(value)
+    end
+    arr
+  end
 end
 
 # p [1, 2, 3].my_each { |n| puts n }
@@ -86,3 +94,5 @@ end
 # p [1, 2, 'abcd'].my_any?(2)
 # p [1, 3, 'abcd'].my_none?(/d/)
 # p [3, 2, 4, 2].my_count(3) { |n| n / 2 == 2 }
+p "------"
+p [1, 2, 4].my_map{ |n| n * 2 }
