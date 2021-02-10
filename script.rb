@@ -97,7 +97,7 @@ module Enumerable
         initial = initial.send(sym, self[i])
       end
 
-      initial
+      return initial
     end
 
     memo = self[0]
@@ -108,6 +108,20 @@ module Enumerable
 
     memo
   end
+
+  def my_map_mod(&block)
+    arr = Array.new
+    prc = Proc.new(&block)
+
+    for value in self do
+      arr << prc.call(value)
+    end
+    arr
+  end
+end
+
+def multiply_els(arr)
+  arr.my_inject(:*)
 end
 
 # p [1, 2, 3].my_each { |n| puts n }
@@ -126,5 +140,8 @@ end
 
 # [1, 4, 3, 5].my_inject
 # p [2, 4, 3, 5].my_inject(12, :*)
-p [2, 4, 3, 5].my_inject { |sum, n| sum * n }
+# p [2, 4, 3, 5].my_inject { |sum, n| sum * n }
 # p [2, 4, 3, 5].inject { |sum, n| sum * n }
+# p multiply_els([2,4,5])
+p [1, 2, 3].my_map_mod {|n| n * 2 }
+
