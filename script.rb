@@ -41,7 +41,7 @@ module Enumerable
     unless pattern.nil?
       for value in self do
         if value.is_a? String and !pattern.is_a? Integer
-        return true if pattern.match? value
+          return true if pattern.match? value
         end
 
         if pattern.is_a? Class
@@ -59,7 +59,7 @@ module Enumerable
   end
 
   def my_count(pattern = nil, &block)
-    if !pattern.nil?
+    unless pattern.nil?
       arr = self.my_select { |n| n === pattern }
       return arr.size
     end
