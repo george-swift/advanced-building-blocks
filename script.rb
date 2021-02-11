@@ -65,17 +65,18 @@ module Enumerable
     # 4 check for falsy value if no block is given
     # rubocop:disable Style/DoubleNegation
     return my_select { |n| !!n }.size.positive? unless block_given?
+
     # rubocop:enable Style/DoubleNegation
 
     my_select(&block).size.positive?
   end
 
   def my_none?(pattern = nil, &block)
-    # 1. opposite of all
-    return !my_any?(pattern, &block)
+    # 1. no block and no argument is given
+    return my_select { |n| [false, nil].include?(n) }.size == size if !block_given? && pattern.nil?
 
-    # 2. no block and no argument is given
-    my_select { |n| n == false || n == nil }.size == size unless block_given?
+    # 2. opposite of any
+    !my_any?(pattern, &block)
   end
 
   def my_count(pattern = nil, &block)
@@ -109,10 +110,7 @@ module Enumerable
   end
 
   def my_inject(initial = nil, sym = nil)
-     if self.is_a? Range
-      arr = self.to_a
-      
-     end
+    values = is_a? Range ? to_a : self
 
     unless block_given?
       if initial.is_a? Symbol
@@ -120,19 +118,19 @@ module Enumerable
         initial = nil
       end
 
-      initial = self[0] if initial.nil?
+      initial = values[0] if initial.nil?
 
       1.upto(size - 1) do |i|
-        initial = initial.send(sym, self[i])
+        initial = initial.send(sym, values[i])
       end
 
       return initial
     end
 
-    memo = self[0]
+    memo = values[0]
 
     1.upto(size - 1) do |i|
-      memo = yield(memo, self[i])
+      memo = yield(memo, values[i])
     end
 
     memo
@@ -153,18 +151,4 @@ def multiply_els(arr)
   arr.my_inject(:*)
 end
 
-
-p (5..10).inject { |sum, n| sum + n }                           
-           
-p (5..10).inject(:*)                   
-
-p "........"
-
-p (5..10).my_inject { |sum, n| sum + n }     
-
-p (5..10).my_inject(:*)            
-
-p [5,6,7,8,9,10].my_inject(:*)     
-
-p [5,6,7,8,9,10].my_inject { |sum, n| sum + n } 
 # rubocop:enable Style/CaseEquality, Style/For
