@@ -53,24 +53,29 @@ module Enumerable
   end
 
   def my_any?(pattern = nil, &block)
-    #1. if a class is given, so much as one return true
+    # 1. if a class is given, so much as one return true
     return my_select { |n| n.is_a? pattern }.size.positive? if pattern.is_a? Class
 
-    #2 when regex is given match one say true
+    # 2 when regex is given match one say true
     return my_select { |n| pattern.match? n }.size.positive? if pattern.is_a? Regexp
 
-    #3 if pattern is not class or regex, check equality
+    # 3 if pattern is not class or regex, check equality
     return my_select { |n| pattern === n }.size.positive? unless pattern.nil?
 
-    #4 check for falsy value if no block is given
+    # 4 check for falsy value if no block is given
+    # rubocop:disable Style/DoubleNegation
     return my_select { |n| !!n }.size.positive? unless block_given?
+    # rubocop:enable Style/DoubleNegation
 
     my_select(&block).size.positive?
   end
 
-
   def my_none?(pattern = nil, &block)
-    !my_any?(pattern, &block)
+    # 1. opposite of all
+    return !my_any?(pattern, &block)
+
+    # 2. no block and no argument is given
+    my_select { |n| n == false || n == nil }.size == size unless block_given?
   end
 
   def my_count(pattern = nil, &block)
@@ -142,8 +147,5 @@ end
 def multiply_els(arr)
   arr.my_inject(:*)
 end
-
-arr = [2, 4, 2]
-p arr.my_any? { |n| n.odd? }
 
 # rubocop:enable Style/CaseEquality, Style/For
