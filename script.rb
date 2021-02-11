@@ -53,24 +53,21 @@ module Enumerable
   end
 
   def my_any?(pattern = nil, &block)
-    return my_select { |n| !n.nil? && n != false }.size.positive? unless block_given? && !pattern.nil?
+    #1. if a class is given, so much as one return true
+    return my_select { |n| n.is_a? pattern }.size.positive? if pattern.is_a? Class
 
-    return my_select(&block).size.positive? if block_given?
+    #2 when regex is given match one say true
+    return my_select { |n| pattern.match? n }.size.positive? if pattern.is_a? Regexp
 
-    return my_any_pattern(pattern) unless pattern.nil?
+    #3 if pattern is not class or regex, check equality
+    return my_select { |n| pattern === n }.size.positive? unless pattern.nil?
 
-    false
+    #4 check for falsy value if no block is given
+    return my_select { |n| !!n }.size.positive? unless block_given?
+
+    my_select(&block).size.positive?
   end
 
-  def my_any_pattern(pattern = nil)
-    for value in self do
-      return true if (value.is_a? String) && (!pattern.is_a? Integer) && (pattern.match? value)
-
-      return true if (pattern.is_a? Class) && (value.is_a? pattern)
-
-      return true if value === pattern
-    end
-  end
 
   def my_none?(pattern = nil, &block)
     !my_any?(pattern, &block)
@@ -146,7 +143,7 @@ def multiply_els(arr)
   arr.my_inject(:*)
 end
 
-arr = [2, 4, 6]
-p arr.my_all?
+arr = [2, 4, 2]
+p arr.my_any? { |n| n.odd? }
 
 # rubocop:enable Style/CaseEquality, Style/For
