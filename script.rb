@@ -1,6 +1,6 @@
+# frozen_string_literal: true
+
 # rubocop:disable Style/CaseEquality, Style/For
-# rubocop:disable Metrics/CyclomaticComplexity
-# rubocop:disable Metrics/PerceivedComplexity
 
 # Enumerables
 
@@ -36,22 +36,23 @@ module Enumerable
   end
 
   def my_any?(pattern = nil, &block)
-    if block_given?
-      new_arr = my_select(&block)
-      return new_arr.size.positive?
-    end
+    return my_select { |n| !n.nil? && n != false }.size.positive? unless block_given? && !pattern.nil?
 
-    unless pattern.nil?
-      for value in self do
-        return true if (value.is_a? String) && (!pattern.is_a? Integer) && (pattern.match? value)
+    return my_select(&block).size.positive? if block_given?
 
-        return true if (pattern.is_a? Class) && (value.is_a? pattern)
-
-        return true if value === pattern
-      end
-    end
+    return my_any_pattern(pattern) unless pattern.nil?
 
     false
+  end
+
+  def my_any_pattern(pattern = nil)
+    for value in self do
+      return true if (value.is_a? String) && (!pattern.is_a? Integer) && (pattern.match? value)
+
+      return true if (pattern.is_a? Class) && (value.is_a? pattern)
+
+      return true if value === pattern
+    end
   end
 
   def my_none?(pattern = nil, &block)
@@ -127,5 +128,3 @@ def multiply_els(arr)
 end
 
 # rubocop:enable Style/CaseEquality, Style/For
-# rubocop:enable Metrics/CyclomaticComplexity
-# rubocop:enable Metrics/PerceivedComplexity
