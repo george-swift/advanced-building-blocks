@@ -6,21 +6,25 @@
 
 module Enumerable
   def my_each
+    return to_enum(:my_each) unless block_given?
     for value in self do
       yield value
     end
   end
 
   def my_each_with_index
+    return to_enum(:my_each_with_index) unless block_given?
     i = 0
 
     for value in self do
       yield(value, i)
       i += 1
     end
+    
   end
 
   def my_select
+    return to_enum(:my_select) unless block_given?
     arr = []
 
     for value in self do
@@ -126,5 +130,9 @@ end
 def multiply_els(arr)
   arr.my_inject(:*)
 end
+
+
+a = [1, 2, 3]
+p a.my_select
 
 # rubocop:enable Style/CaseEquality, Style/For
