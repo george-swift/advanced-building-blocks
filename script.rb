@@ -109,6 +109,11 @@ module Enumerable
   end
 
   def my_inject(initial = nil, sym = nil)
+     if self.is_a? Range
+      arr = self.to_a
+      
+     end
+
     unless block_given?
       if initial.is_a? Symbol
         sym = initial
@@ -148,4 +153,18 @@ def multiply_els(arr)
   arr.my_inject(:*)
 end
 
+
+p (5..10).inject { |sum, n| sum + n }                           
+           
+p (5..10).inject(:*)                   
+
+p "........"
+
+p (5..10).my_inject { |sum, n| sum + n }     
+
+p (5..10).my_inject(:*)            
+
+p [5,6,7,8,9,10].my_inject(:*)     
+
+p [5,6,7,8,9,10].my_inject { |sum, n| sum + n } 
 # rubocop:enable Style/CaseEquality, Style/For
