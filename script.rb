@@ -7,6 +7,7 @@
 module Enumerable
   def my_each
     return to_enum(:my_each) unless block_given?
+
     for value in self do
       yield value
     end
@@ -14,13 +15,13 @@ module Enumerable
 
   def my_each_with_index
     return to_enum(:my_each_with_index) unless block_given?
+
     i = 0
 
     for value in self do
       yield(value, i)
       i += 1
     end
-    
   end
 
   def my_select
@@ -36,13 +37,13 @@ module Enumerable
 
   def my_all?(pattern = nil, &block)
     # 1. if a Class is given, check for class
-    return my_select {|n| n.is_a? pattern }.size == size if pattern.is_a? Class
+    return my_select { |n| n.is_a? pattern }.size == size if pattern.is_a? Class
 
     # 2. if regexp, is given, check for coincidence
-    return my_select {|n| pattern.match? n }.size == size if pattern.is_a? Regexp
+    return my_select { |n| pattern.match? n }.size == size if pattern.is_a? Regexp
 
     # 3. if pattern, check for equality
-    return my_select {|n| pattern === n }.size == size unless pattern.nil?
+    return my_select { |n| pattern === n }.size == size unless pattern.nil?
 
     # 4. check for any nil or false value
     return my_select { |n| n.nil? || n == false }.empty? unless block_given?
@@ -146,6 +147,6 @@ def multiply_els(arr)
 end
 
 arr = [2, 4, 6]
-p arr.my_all? { |n| n.even? }
+p arr.my_all?
 
 # rubocop:enable Style/CaseEquality, Style/For
