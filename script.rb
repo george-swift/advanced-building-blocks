@@ -25,6 +25,7 @@ module Enumerable
 
   def my_select
     return to_enum(:my_select) unless block_given?
+
     arr = []
 
     for value in self do
@@ -33,10 +34,21 @@ module Enumerable
     arr
   end
 
-  def my_all?(&block)
-    new_arr = my_select(&block)
+  def my_all?(pattern = nil, &block)
+    # 1. if a Class is given, check for class
+    return my_select {|n| n.is_a? pattern }.size == size if pattern.is_a? Class
 
-    new_arr.size == size
+    # 2. if regexp, is given, check for coincidence
+    return my_select {|n| pattern.match? n }.size == size if pattern.is_a? Regexp
+
+    # 3. if pattern, check for equality
+    return my_select {|n| pattern === n }.size == size unless pattern.nil?
+
+    # 4. check for any nil or false value
+    return my_select { |n| n.nil? || n == false }.empty? unless block_given?
+
+    # 5. Go on with the block check
+    my_select(&block).size == size
   end
 
   def my_any?(pattern = nil, &block)
@@ -78,6 +90,8 @@ module Enumerable
   end
 
   def my_map(proc_arg = nil)
+    return to_enum(:my_map) unless block_given?
+
     arr = []
 
     for value in self do
@@ -131,8 +145,7 @@ def multiply_els(arr)
   arr.my_inject(:*)
 end
 
-
-a = [1, 2, 3]
-p a.my_select
+arr = [2, 4, 6]
+p arr.my_all? { |n| n.even? }
 
 # rubocop:enable Style/CaseEquality, Style/For
